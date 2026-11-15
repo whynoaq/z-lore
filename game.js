@@ -389,6 +389,13 @@ function init() {
 
   window.__flashBeam = flashBeam;
 
+  const flashLight = new THREE.SpotLight(0xffaa55, 20, 100, Math.PI / 4, 0.3, 2);
+  const flashTarget = new THREE.Object3D();
+  scene.add(flashLight, flashTarget);
+  flashLight.target = flashTarget;
+  window.__flashLight = flashLight;
+  window.__flashTarget = flashTarget;
+
   const versionEl = document.createElement('div');
   versionEl.id = 'version';
   versionEl.textContent = 'v0.1.0';
@@ -397,8 +404,8 @@ function init() {
   window.addEventListener('keydown', (e) => {
     if (e.code === 'KeyF') {
       flashlightOn = !flashlightOn;
-      flashLight.visible = flashlightOn;
-      flashBeam.visible = flashlightOn;
+      if (window.__flashLight) window.__flashLight.visible = flashlightOn;
+      if (window.__flashBeam) window.__flashBeam.visible = flashlightOn;
     }
   });
 
@@ -470,6 +477,13 @@ function animate() {
     window.__flashBeam.position.copy(camera.position).add(dir.clone().multiplyScalar(10));
     window.__flashBeam.quaternion.copy(camera.quaternion);
     window.__flashBeam.rotateX(-Math.PI / 2);
+
+  if (window.__flashLight) {
+    window.__flashLight.position.copy(camera.position);
+    const dir2 = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
+    window.__flashTarget.position.copy(camera.position).add(dir2.multiplyScalar(12));
+    window.__flashTarget.updateMatrixWorld();
+  }
   }
 
   const fogClouds = scene.userData.fogClouds;
