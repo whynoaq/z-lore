@@ -4,7 +4,7 @@ let mouseDelta = { x: 0, y: 0 };
 let touchMove = { x: 0, z: 0, len: 0 };
 let introActive = true;
 let introStart = null;
-const INTRO_DURATION = 3.6;
+const INTRO_DURATION = 5.2;
 
 function isTouchDevice() {
   return (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || ('ontouchstart' in window) || (navigator.maxTouchPoints || 0) > 0;
@@ -389,52 +389,63 @@ function animate() {
   const dt = Math.min(clock.getDelta(), 0.1);
 
   if (introActive) {
-    if (introStart === null) introStart = clock.elapsedTime;
-    const t = clock.elapsedTime - introStart;
-    const fadeEl = document.getElementById('intro-fade');
-    if (t < 0.8) {
-      if (fadeEl) fadeEl.classList.add('hide');
-      cameraCtrl.pitch = Math.PI / 2;
-      cameraCtrl.height = 0.2;
-      cameraCtrl.yaw = 0;
+    if (introStart === null) introStart = clock.elapsedTime
+    const t = clock.elapsedTime - introStart
+    const fadeEl = document.getElementById('intro-fade')
+    const smooth = function(x){ return x * x * (3 - 2 * x); }
+    if (t < 0.6) {
+      // открывает глаза
+      if (fadeEl) fadeEl.classList.add('hide')
+      cameraCtrl.pitch = Math.PI / 2
+      cameraCtrl.height = 0.2
+      cameraCtrl.yaw = 0
+      player.group.position.set(0, 0.5, 0)
     } else if (t < 2.0) {
-      const k = (t - 0.8) / 1.2;
-      cameraCtrl.pitch = Math.PI / 2 * (1 - k);
-      cameraCtrl.height = 0.2 + 0.6 * k;
-      cameraCtrl.yaw = 0;
+      // потихоньку поднимается
+      const k = smooth((t - 0.6) / 1.4)
+      cameraCtrl.pitch = Math.PI / 2 * (1 - k)
+      cameraCtrl.height = 0.2 + 0.6 * k
+      cameraCtrl.yaw = 0
+      player.group.position.set(0, 0.5, 0.8 * k)
     } else if (t < 3.2) {
-      const k = (t - 2.0) / 1.2;
-      cameraCtrl.pitch = 0;
-      cameraCtrl.height = 0.8;
-      if (k < 0.5) cameraCtrl.yaw = 0.4 * (k / 0.5);
-      else cameraCtrl.yaw = 0.4 - 0.7 * ((k - 0.5) / 0.5);
+      // осматривается
+      const k = smooth((t - 2.0) / 1.2)
+      cameraCtrl.pitch = 0
+      cameraCtrl.height = 0.8
+      if (k < 0.5) cameraCtrl.yaw = 0.5 * smooth(k / 0.5)
+      else cameraCtrl.yaw = 0.5 - 0.8 * smooth((k - 0.5) / 0.5)
+      player.group.position.set(0, 0.5, 0.8)
     } else if (t < 4.2) {
-      const k = (t - 3.2) / 1.0;
-      cameraCtrl.pitch = 0;
-      cameraCtrl.height = 0.8;
-      cameraCtrl.yaw = -0.3 + (Math.PI / 3 + 0.3) * k;
-    } else if (t < 5.0) {
-      const k = (t - 4.2) / 0.8;
-      cameraCtrl.pitch = 0;
-      cameraCtrl.height = 0.8 + 0.7 * k;
-      cameraCtrl.yaw = Math.PI / 3;
+      // поворачивается влево
+      const k = smooth((t - 3.2) / 1.0)
+      cameraCtrl.pitch = 0
+      cameraCtrl.height = 0.8
+      cameraCtrl.yaw = -0.3 + (Math.PI / 3 + 0.3) * k
+      player.group.position.set(0, 0.5, 0.8 + 0.4 * k)
+    } else if (t < 5.2) {
+      // встает (плавно, на месте поворота)
+      const k = smooth((t - 4.2) / 1.0)
+      cameraCtrl.pitch = 0
+      cameraCtrl.height = 0.8 + 0.7 * k
+      cameraCtrl.yaw = Math.PI / 3
+      player.group.position.set(0, 0.5 + 0.25 * k, 1.2 + 0.8 * k)
     } else {
-      introActive = false;
-      cameraCtrl.intro = false;
-      cameraCtrl.pitch = 0;
-      cameraCtrl.height = 1.5;
-      cameraCtrl.yaw = Math.PI / 3;
-      player.group.position.set(0, 0.75, 2.0);
-      const el = document.getElementById('intro-text');
+      introActive = false
+      cameraCtrl.intro = false
+      cameraCtrl.pitch = 0
+      cameraCtrl.height = 1.5
+      cameraCtrl.yaw = Math.PI / 3
+      player.group.position.set(0, 0.75, 2.0)
+      const el = document.getElementById('intro-text')
       if (el) {
-        el.classList.add('show');
-        setTimeout(() => el.classList.add('hide'), 2000);
+        el.classList.add('show')
+        setTimeout(() => el.classList.add('hide'), 2000)
       }
-      if (fadeEl) fadeEl.classList.add('hide');
+      if (fadeEl) fadeEl.classList.add('hide')
     }
-    cameraCtrl.update(dt);
-    renderer.render(scene, camera);
-    return;
+    cameraCtrl.update(dt)
+    renderer.render(scene, camera)
+    return
   }
 
   const cameraMove = cameraCtrl.update(dt);
