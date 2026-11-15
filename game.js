@@ -180,96 +180,101 @@ function createWorld(scene) {
 
 /* ---------- mobile controls ---------- */
 function createMobileControls() {
-  const joystick = document.createElement('div');
-  joystick.id = 'joystick';
-  const knob = document.createElement('div');
-  knob.id = 'joystick-knob';
-  joystick.appendChild(knob);
-  document.body.appendChild(joystick);
+  const joystick = document.createElement('div')
+  joystick.id = 'joystick'
+  const knob = document.createElement('div')
+  knob.id = 'joystick-knob'
+  joystick.appendChild(knob)
+  document.body.appendChild(joystick)
 
-  const jump = document.createElement('button');
-  jump.id = 'jump-btn';
-  jump.textContent = 'Прыжок';
-  document.body.appendChild(jump);
+  const jump = document.createElement('button')
+  jump.id = 'jump-btn'
+  jump.textContent = 'Прыжок'
+  document.body.appendChild(jump)
 
-  joystick.classList.add('active');
-  jump.classList.add('active');
+  joystick.style.display = 'none'
 
-  let joyTouchId = null;
-  let joyCenter = { x: 0, y: 0 };
-  const joyRadius = 50;
+  let joyTouchId = null
+  let joyCenter = { x: 0, y: 0 }
+  const joyRadius = 50
 
   function updateJoy(cx, cy) {
-    const dx = cx - joyCenter.x;
-    const dy = cy - joyCenter.y;
-    const dist = Math.hypot(dx, dy);
-    const clamped = Math.min(dist, joyRadius);
-    const ang = Math.atan2(dy, dx);
-    const kx = Math.cos(ang) * clamped;
-    const ky = Math.sin(ang) * clamped;
-    knob.style.transform = 'translate(' + kx + 'px, ' + ky + 'px)';
-    setTouchMove(kx / joyRadius, ky / joyRadius);
+    const dx = cx - joyCenter.x
+    const dy = cy - joyCenter.y
+    const dist = Math.hypot(dx, dy)
+    const clamped = Math.min(dist, joyRadius)
+    const ang = Math.atan2(dy, dx)
+    const kx = Math.cos(ang) * clamped
+    const ky = Math.sin(ang) * clamped
+    knob.style.transform = 'translate(' + kx + 'px, ' + ky + 'px)'
+    setTouchMove(kx / joyRadius, ky / joyRadius)
   }
 
-  const lookTouches = {};
+  const lookTouches = {}
 
   function handleTouchStart(e) {
-    let prevent = false;
+    let prevent = false
     for (const t of e.changedTouches) {
-      const target = t.target;
-      if (target === joystick || joystick.contains(target)) {
-        joyTouchId = t.identifier;
-        const rect = joystick.getBoundingClientRect();
-        joyCenter = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
-        updateJoy(t.clientX, t.clientY);
-        prevent = true;
-      } else if (target === jump) {
-        requestJump();
-        prevent = true;
+      const target = t.target
+      if (target === jump) {
+        requestJump()
+        prevent = true
+      } else if (t.clientX < window.innerWidth / 2) {
+        joyTouchId = t.identifier
+        joyCenter = { x: t.clientX, y: t.clientY }
+        joystick.style.left = (joyCenter.x - 60) + 'px'
+        joystick.style.top = (joyCenter.y - 60) + 'px'
+        joystick.style.display = 'block'
+        updateJoy(t.clientX, t.clientY)
+        prevent = true
       } else {
-        lookTouches[t.identifier] = { x: t.clientX, y: t.clientY };
-        prevent = true;
+        lookTouches[t.identifier] = { x: t.clientX, y: t.clientY }
+        prevent = true
       }
     }
-    if (prevent) e.preventDefault();
+    if (prevent) e.preventDefault()
   }
+
   function handleTouchMove(e) {
-    let prevent = false;
+    let prevent = false
     for (const t of e.changedTouches) {
       if (t.identifier === joyTouchId) {
-        updateJoy(t.clientX, t.clientY);
-        prevent = true;
+        updateJoy(t.clientX, t.clientY)
+        prevent = true
       } else if (lookTouches[t.identifier]) {
-        const prev = lookTouches[t.identifier];
-        addLookDelta(t.clientX - prev.x, t.clientY - prev.y);
-        lookTouches[t.identifier] = { x: t.clientX, y: t.clientY };
-        prevent = true;
+        const prev = lookTouches[t.identifier]
+        addLookDelta(t.clientX - prev.x, t.clientY - prev.y)
+        lookTouches[t.identifier] = { x: t.clientX, y: t.clientY }
+        prevent = true
       }
     }
-    if (prevent) e.preventDefault();
+    if (prevent) e.preventDefault()
   }
+
   function handleTouchEnd(e) {
     for (const t of e.changedTouches) {
       if (t.identifier === joyTouchId) {
-        joyTouchId = null;
-        knob.style.transform = 'translate(0px, 0px)';
-        clearTouchMove();
+        joyTouchId = null
+        knob.style.transform = 'translate(0px, 0px)'
+        joystick.style.display = 'none'
+        clearTouchMove()
       }
-      delete lookTouches[t.identifier];
+      delete lookTouches[t.identifier]
     }
   }
 
-  document.addEventListener('touchstart', handleTouchStart, { passive: false });
-  document.addEventListener('touchmove', handleTouchMove, { passive: false });
-  document.addEventListener('touchend', handleTouchEnd, { passive: false });
-  document.addEventListener('touchcancel', handleTouchEnd, { passive: false });
+  document.addEventListener('touchstart', handleTouchStart, { passive: false })
+  document.addEventListener('touchmove', handleTouchMove, { passive: false })
+  document.addEventListener('touchend', handleTouchEnd, { passive: false })
+  document.addEventListener('touchcancel', handleTouchEnd, { passive: false })
 
   jump.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    requestJump();
-  }, { passive: false });
+    e.preventDefault()
+    e.stopPropagation()
+    requestJump()
+  }, { passive: false })
 }
+
 
 /* ---------- main ---------- */
 let scene, camera, renderer, player, cameraCtrl, collidables, clock;

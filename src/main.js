@@ -148,8 +148,7 @@ function createMobileControls() {
   jump.textContent = 'Прыжок'
   document.body.appendChild(jump)
 
-  joystick.classList.add('active')
-  jump.classList.add('active')
+  joystick.style.display = 'none'
 
   let joyTouchId = null
   let joyCenter = { x: 0, y: 0 }
@@ -173,14 +172,16 @@ function createMobileControls() {
     let prevent = false
     for (const t of e.changedTouches) {
       const target = t.target
-      if (target === joystick || joystick.contains(target)) {
-        joyTouchId = t.identifier
-        const rect = joystick.getBoundingClientRect()
-        joyCenter = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }
-        updateJoy(t.clientX, t.clientY)
-        prevent = true
-      } else if (target === jump) {
+      if (target === jump) {
         requestJump()
+        prevent = true
+      } else if (t.clientX < window.innerWidth / 2) {
+        joyTouchId = t.identifier
+        joyCenter = { x: t.clientX, y: t.clientY }
+        joystick.style.left = (joyCenter.x - 60) + 'px'
+        joystick.style.top = (joyCenter.y - 60) + 'px'
+        joystick.style.display = 'block'
+        updateJoy(t.clientX, t.clientY)
         prevent = true
       } else {
         lookTouches[t.identifier] = { x: t.clientX, y: t.clientY }
@@ -211,6 +212,7 @@ function createMobileControls() {
       if (t.identifier === joyTouchId) {
         joyTouchId = null
         knob.style.transform = 'translate(0px, 0px)'
+        joystick.style.display = 'none'
         clearTouchMove()
       }
       delete lookTouches[t.identifier]
@@ -228,6 +230,7 @@ function createMobileControls() {
     requestJump()
   }, { passive: false })
 }
+
 
 init()
 animate()
