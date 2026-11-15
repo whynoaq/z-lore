@@ -127,11 +127,9 @@ export function createWorld(scene) {
         float d = distance(vWorldPos, uLightPos);
         float atten = 1.0 - smoothstep(0.0, uLightRange, d);
         atten = pow(atten, 1.6) * uLightIntensity;
-        vec3 base = vec3(0.08, 0.08, 0.1);
-        vec3 col = mix(base, uLightColor, clamp(atten, 0.0, 1.0) * 0.85);
-        vec2 uv = gl_PointCoord - vec2(0.5);
-        if (length(uv) > 0.5) discard;
-        gl_FragColor = vec4(col, 0.45);
+        vec3 base = vec3(0.25, 0.25, 0.28);
+        vec3 col = mix(base, uLightColor, clamp(atten, 0.0, 1.0) * 0.25);
+        gl_FragColor = vec4(col, 0.18);
       }
     `,
     transparent: true,
