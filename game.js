@@ -142,7 +142,7 @@ class Player {
 /* ---------- world ---------- */
 function createWorld(scene) {
   const collidables = [];
-  const ambient = new THREE.AmbientLight(0x8899bb, 0.15);
+  const ambient = new THREE.AmbientLight(0x8899bb, 0.3);
   scene.add(ambient);
   const dirLight = new THREE.DirectionalLight(0x8899cc, 0.3);
   dirLight.position.set(10, 20, 10);
@@ -382,15 +382,11 @@ function init() {
   collidables = createWorld(scene);
   cameraCtrl = new FirstPersonCamera(camera, player);
 
-  const flashLight = new THREE.PointLight(0xffaa55, 18, 120);
-  scene.add(flashLight);
-
   const beamGeo = new THREE.ConeGeometry(2.5, 20, 16, 1, true);
   const beamMat = new THREE.MeshBasicMaterial({ color: 0xffaa55, transparent: true, opacity: 0.15, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
   const flashBeam = new THREE.Mesh(beamGeo, beamMat);
   scene.add(flashBeam);
 
-  window.__flashLight = flashLight;
   window.__flashBeam = flashBeam;
 
   const versionEl = document.createElement('div');
@@ -469,9 +465,6 @@ function animate() {
   requestAnimationFrame(animate);
   const dt = Math.min(clock.getDelta(), 0.1);
 
-  if (window.__flashLight) {
-    window.__flashLight.position.copy(camera.position);
-  }
   if (window.__flashBeam) {
     const dir = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
     window.__flashBeam.position.copy(camera.position).add(dir.clone().multiplyScalar(10));
@@ -488,9 +481,6 @@ function animate() {
       if (pos.array[i * 3 + 2] > 35) pos.array[i * 3 + 2] = -35;
     }
     pos.needsUpdate = true;
-    if (window.__flashLight && fogClouds.material.uniforms) {
-      fogClouds.material.uniforms.uLightPos.value.copy(window.__flashLight.position);
-    }
   }
 
   if (introActive) {

@@ -4,7 +4,7 @@ export function createWorld(scene) {
   const collidables = []
 
   // Освещение
-  const ambient = new THREE.AmbientLight(0x8899bb, 0.15)
+  const ambient = new THREE.AmbientLight(0x8899bb, 0.3)
   scene.add(ambient)
 
   const dirLight = new THREE.DirectionalLight(0x8899cc, 0.3)
