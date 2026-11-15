@@ -17,6 +17,8 @@
       #intro-text { position: absolute; top: 40%; left: 50%; transform: translate(-50%,-50%); color: #fff; font-size: 2rem; font-weight: 600; text-shadow: 0 2px 8px rgba(0,0,0,0.8); z-index: 50; opacity: 0; transition: opacity 0.8s ease; pointer-events: none; }
     #intro-text.show { opacity: 1; }
     #intro-text.hide { opacity: 0; }
+      #intro-fade { position: absolute; inset: 0; background: #000; z-index: 60; opacity: 1; transition: opacity 0.8s ease; pointer-events: none; }
+    #intro-fade.hide { opacity: 0; }
   </style>
 </head>
 <body>
@@ -24,6 +26,6 @@
     import * as THREE from './three.module.min.js';
     window.THREE = THREE;
   </script>
-  <script src="game.js?v=12" defer></script>
+  <script src="game.js?v=13" defer></script>
 </body>
 </html>

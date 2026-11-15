@@ -335,8 +335,12 @@ function init() {
   clock = new THREE.Clock();
   player.group.position.set(0, 0.5, 0);
   cameraCtrl.intro = true;
-  cameraCtrl.pitch = -1.2;
+  cameraCtrl.pitch = Math.PI / 2;
   cameraCtrl.height = 0.2;
+
+  const introFade = document.createElement('div');
+  introFade.id = 'intro-fade';
+  document.body.appendChild(introFade);
 
   const introText = document.createElement('div');
   introText.id = 'intro-text';
@@ -387,19 +391,31 @@ function animate() {
   if (introActive) {
     if (introStart === null) introStart = clock.elapsedTime;
     const t = clock.elapsedTime - introStart;
-    if (t < 1.2) {
-      const k = t / 1.2;
-      cameraCtrl.pitch = -1.2 + 0.6 * k;
+    const fadeEl = document.getElementById('intro-fade');
+    if (t < 0.8) {
+      if (fadeEl) fadeEl.classList.add('hide');
+      cameraCtrl.pitch = Math.PI / 2;
+      cameraCtrl.height = 0.2;
+      cameraCtrl.yaw = 0;
+    } else if (t < 2.0) {
+      const k = (t - 0.8) / 1.2;
+      cameraCtrl.pitch = Math.PI / 2 * (1 - k);
       cameraCtrl.height = 0.2 + 0.6 * k;
       cameraCtrl.yaw = 0;
-    } else if (t < 2.4) {
-      const k = (t - 1.2) / 1.2;
-      cameraCtrl.pitch = -0.6;
+    } else if (t < 3.2) {
+      const k = (t - 2.0) / 1.2;
+      cameraCtrl.pitch = 0;
       cameraCtrl.height = 0.8;
-      cameraCtrl.yaw = (Math.PI / 3) * k;
-    } else if (t < 3.6) {
-      const k = (t - 2.4) / 1.2;
-      cameraCtrl.pitch = -0.6 * (1 - k);
+      if (k < 0.5) cameraCtrl.yaw = 0.4 * (k / 0.5);
+      else cameraCtrl.yaw = 0.4 - 0.7 * ((k - 0.5) / 0.5);
+    } else if (t < 4.2) {
+      const k = (t - 3.2) / 1.0;
+      cameraCtrl.pitch = 0;
+      cameraCtrl.height = 0.8;
+      cameraCtrl.yaw = -0.3 + (Math.PI / 3 + 0.3) * k;
+    } else if (t < 5.0) {
+      const k = (t - 4.2) / 0.8;
+      cameraCtrl.pitch = 0;
       cameraCtrl.height = 0.8 + 0.7 * k;
       cameraCtrl.yaw = Math.PI / 3;
     } else {
@@ -414,6 +430,7 @@ function animate() {
         el.classList.add('show');
         setTimeout(() => el.classList.add('hide'), 2000);
       }
+      if (fadeEl) fadeEl.classList.add('hide');
     }
     cameraCtrl.update(dt);
     renderer.render(scene, camera);

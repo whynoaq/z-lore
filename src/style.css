@@ -150,3 +150,15 @@ canvas {
 }
 #intro-text.show { opacity: 1; }
 #intro-text.hide { opacity: 0; }
+
+
+#intro-fade {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  z-index: 60;
+  opacity: 1;
+  transition: opacity 0.8s ease;
+  pointer-events: none;
+}
+#intro-fade.hide { opacity: 0; }
