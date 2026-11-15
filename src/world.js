@@ -92,7 +92,7 @@ export function createWorld(scene) {
 
   // Туман партиклами
   const fogGeo = new THREE.BufferGeometry()
-  const fogCount = 150
+  const fogCount = 200
   const fogPos = new Float32Array(fogCount * 3)
   for (let i = 0; i < fogCount; i++) {
     fogPos[i * 3] = (Math.random() - 0.5) * 70

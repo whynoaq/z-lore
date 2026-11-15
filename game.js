@@ -216,7 +216,7 @@ function createWorld(scene) {
   scene.add(headboard);
 
   const fogGeo = new THREE.BufferGeometry();
-  const fogCount = 150;
+  const fogCount = 200;
   const fogPos = new Float32Array(fogCount * 3);
   for (let i = 0; i < fogCount; i++) {
     fogPos[i * 3] = (Math.random() - 0.5) * 70;
@@ -395,7 +395,7 @@ function init() {
 
   const versionEl = document.createElement('div');
   versionEl.id = 'version';
-  versionEl.textContent = 'v0.1.0';
+  versionEl.textContent = 'v0.1.1';
   document.body.appendChild(versionEl);
 
   window.addEventListener('keydown', (e) => {
