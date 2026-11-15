@@ -90,5 +90,27 @@ export function createWorld(scene) {
   headboard.castShadow = true
   scene.add(headboard)
 
+  // Туман партиклами
+  const fogGeo = new THREE.BufferGeometry()
+  const fogCount = 400
+  const fogPos = new Float32Array(fogCount * 3)
+  for (let i = 0; i < fogCount; i++) {
+    fogPos[i * 3] = (Math.random() - 0.5) * 70
+    fogPos[i * 3 + 1] = Math.random() * 5 + 0.3
+    fogPos[i * 3 + 2] = (Math.random() - 0.5) * 70
+  }
+  fogGeo.setAttribute('position', new THREE.BufferAttribute(fogPos, 3))
+  const fogMat = new THREE.PointsMaterial({
+    color: 0x666677,
+    size: 14,
+    transparent: true,
+    opacity: 0.18,
+    depthWrite: false,
+    sizeAttenuation: true
+  })
+  const fogClouds = new THREE.Points(fogGeo, fogMat)
+  scene.add(fogClouds)
+  scene.userData.fogClouds = fogClouds
+
   return collidables
 }

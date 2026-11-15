@@ -159,6 +159,17 @@ function animate() {
 
   const dt = Math.min(clock.getDelta(), 0.1)
 
+  const fogClouds = scene.userData.fogClouds
+  if (fogClouds) {
+    const pos = fogClouds.geometry.attributes.position
+    for (let i = 0; i < pos.count; i++) {
+      pos.array[i * 3] += 0.006 * Math.sin(clock.elapsedTime * 0.2 + i)
+      pos.array[i * 3 + 2] += 0.003
+      if (pos.array[i * 3 + 2] > 35) pos.array[i * 3 + 2] = -35
+    }
+    pos.needsUpdate = true
+  }
+
   if (window.__flashlight) {
     window.__flashlight.position.copy(camera.position)
     const dir = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion)
