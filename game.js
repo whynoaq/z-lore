@@ -25,7 +25,7 @@ function setTouchMove(x, z) {
   }
 }
 function clearTouchMove() { touchMove.x = 0; touchMove.z = 0; touchMove.len = 0; }
-function addLookDelta(dx, dy) { mouseDelta.x += dx * 2; mouseDelta.y += dy * 2; }
+function addLookDelta(dx, dy) { mouseDelta.x += dx * 4; mouseDelta.y += dy * 4; }
 function requestJump() { keys['Space'] = true; setTimeout(() => { keys['Space'] = false; }, 180); }
 
 function getInputVector() {

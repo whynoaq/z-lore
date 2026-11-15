@@ -53,8 +53,8 @@ export function clearTouchMove() {
 }
 
 export function addLookDelta(dx, dy) {
-  mouseDelta.x += dx * 2
-  mouseDelta.y += dy * 2
+  mouseDelta.x += dx * 4
+  mouseDelta.y += dy * 4
 }
 
 export function requestJump() {
