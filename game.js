@@ -7,15 +7,10 @@ window.addEventListener('mousemove', (e) => { mouseDelta.x = e.movementX; mouseD
 function isKey(code) { return !!keys[code]; }
 function getInputVector() {
   let x = 0, z = 0;
-  if (Math.abs(stickVec.x) > 0.05 || Math.abs(stickVec.y) > 0.05) {
-    x = stickVec.x;
-    z = -stickVec.y;
-  } else {
-    if (isKey('KeyW') || isKey('ArrowUp')) z -= 1;
-    if (isKey('KeyS') || isKey('ArrowDown')) z += 1;
-    if (isKey('KeyA') || isKey('ArrowLeft')) x -= 1;
-    if (isKey('KeyD') || isKey('ArrowRight')) x += 1;
-  }
+  if (isKey('KeyW') || isKey('ArrowUp')) z -= 1;
+  if (isKey('KeyS') || isKey('ArrowDown')) z += 1;
+  if (isKey('KeyA') || isKey('ArrowLeft')) x -= 1;
+  if (isKey('KeyD') || isKey('ArrowRight')) x += 1;
   const len = Math.hypot(x, z);
   return len > 0 ? { x: x / len, z: z / len, len: 1 } : { x: 0, z: 0, len: 0 };
 }
