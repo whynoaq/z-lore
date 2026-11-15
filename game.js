@@ -20,59 +20,6 @@ function getInputVector() {
   return len > 0 ? { x: x / len, z: z / len, len: 1 } : { x: 0, z: 0, len: 0 };
 }
 function getMouseDelta() { const d = { x: mouseDelta.x, y: mouseDelta.y }; mouseDelta.x = 0; mouseDelta.y = 0; return d; }
-/* ---------- mobile input ---------- */
-const stickBase = document.getElementById('stick-knob').parentElement;
-const stickKnob = document.getElementById('stick-knob');
-const btnJump = document.getElementById('btn-jump');
-const stickCenter = { x: 0, y: 0 };
-let stickActive = false;
-let stickPointerId = null;
-let stickVec = { x: 0, y: 0 };
-let lookPointerId = null;
-let lookStartX = 0, lookStartY = 0;
-let lookDelta = { x: 0, y: 0 };
-function getStickBounds() {
-  const r = stickBase.getBoundingClientRect();
-  return { cx: r.left + r.width / 2, cy: r.top + r.height / 2, r: r.width / 2 };
-}
-function updateStick(clientX, clientY) {
-  const b = getStickBounds();
-  let dx = clientX - b.cx;
-  let dy = clientY - b.cy;
-  const dist = Math.hypot(dx, dy);
-  const max = b.r - 23;
-  if (dist > max) { dx = (dx / dist) * max; dy = (dy / dist) * max; }
-  stickKnob.style.transform = `translate(${b.cx + dx - clientX}px, ${b.cy + dy - clientY}px)`;
-  stickVec = { x: dx / max, y: dy / max };
-}
-function resetStick() {
-  stickKnob.style.transform = 'translate(-50%, -50%)';
-  stickVec = { x: 0, y: 0 };
-  stickActive = false;
-  stickPointerId = null;
-}
-stickBase.addEventListener('touchstart', (e) => { e.preventDefault(); if (stickActive) return; const t = e.changedTouches[0]; stickPointerId = t.identifier; stickActive = true; updateStick(t.clientX, t.clientY); }, { passive: false });
-window.addEventListener('touchmove', (e) => {
-  for (let i = 0; i < e.changedTouches.length; i++) {
-    const t = e.changedTouches[i];
-    if (t.identifier === stickPointerId && stickActive) { e.preventDefault(); updateStick(t.clientX, t.clientY); }
-    if (t.identifier === lookPointerId) { e.preventDefault(); lookDelta.x += t.clientX - lookStartX; lookDelta.y += t.clientY - lookStartY; lookStartX = t.clientX; lookStartY = t.clientY; }
-  }
-}, { passive: false });
-window.addEventListener('touchend', (e) => { for (let i = 0; i < e.changedTouches.length; i++) { const t = e.changedTouches[i]; if (t.identifier === stickPointerId) resetStick(); if (t.identifier === lookPointerId) lookPointerId = null; } });
-window.addEventListener('touchcancel', (e) => { for (let i = 0; i < e.changedTouches.length; i++) { const t = e.changedTouches[i]; if (t.identifier === stickPointerId) resetStick(); if (t.identifier === lookPointerId) lookPointerId = null; } });
-window.addEventListener('touchstart', (e) => {
-  for (let i = 0; i < e.changedTouches.length; i++) {
-    const t = e.changedTouches[i];
-    if (t.identifier === stickPointerId) continue;
-    if (t.clientX > window.innerWidth / 2 && lookPointerId === null) { lookPointerId = t.identifier; lookStartX = t.clientX; lookStartY = t.clientY; }
-  }
-}, { passive: false });
-btnJump.addEventListener('touchstart', (e) => { e.preventDefault(); keys['Space'] = true; });
-btnJump.addEventListener('touchend', (e) => { e.preventDefault(); keys['Space'] = false; });
-btnJump.addEventListener('mousedown', (e) => { e.preventDefault(); keys['Space'] = true; });
-btnJump.addEventListener('mouseup', (e) => { e.preventDefault(); keys['Space'] = false; });
-btnJump.addEventListener('mouseleave', (e) => { keys['Space'] = false; });
 /* ---------- camera ---------- */
 const _euler = new THREE.Euler();
 const _quat = new THREE.Quaternion();
@@ -84,10 +31,8 @@ class FirstPersonCamera {
   unlock() { this.locked = false; }
   update(dt) {
     const { x: mx, y: my } = getMouseDelta();
-    const lx = lookDelta.x; const ly = lookDelta.y;
-    lookDelta.x = 0; lookDelta.y = 0;
-    this.yaw -= (mx + lx) * this.sensitivity;
-    this.pitch -= (my + ly) * this.sensitivity;
+    this.yaw -= mx * this.sensitivity;
+    this.pitch -= my * this.sensitivity;
     this.pitch = Math.max(-Math.PI / 2 + 0.01, Math.min(Math.PI / 2 - 0.01, this.pitch));
     this.camera.position.set(this.player.group.position.x, this.player.group.position.y + this.height, this.player.group.position.z);
     _euler.set(this.pitch, this.yaw, 0, 'YXZ');
@@ -195,10 +140,6 @@ function createWorld(scene) {
 }
 /* ---------- main ---------- */
 let scene, camera, renderer, player, cameraCtrl, collidables, clock;
-let isLoaded = false;
-const loadingEl = document.getElementById('loading');
-const uiEl = document.getElementById('ui');
-const crosshairEl = document.getElementById('crosshair');
 function init() {
   console.log('init started');
   scene = new THREE.Scene();
@@ -216,28 +157,6 @@ function init() {
   collidables = createWorld(scene);
   cameraCtrl = new FirstPersonCamera(camera, player);
   clock = new THREE.Clock();
-  const overlay = document.getElementById('overlay');
-  const btnStart = document.getElementById('btn-start');
-  window.enterGame = function enterGame() {
-    console.log('enterGame called');
-    try { document.body.requestPointerLock(); } catch (e) { console.log('pointer lock failed:', e); }
-    overlay.style.display = 'none';
-    uiEl.style.display = 'none';
-    crosshairEl.style.display = 'block';
-    console.log('game started');
-  };
-  btnStart.addEventListener('click', enterGame);
-  btnStart.addEventListener('touchend', (e) => { e.preventDefault(); enterGame(); }, { passive: false });
-  document.addEventListener('pointerlockchange', () => {
-    const locked = document.pointerLockElement === document.body;
-    if (!locked) {
-      overlay.style.display = 'flex';
-      uiEl.style.display = '';
-      crosshairEl.style.display = 'none';
-    }
-  });
-  isLoaded = true;
-  if (loadingEl) loadingEl.style.display = 'none';
 }
 function onResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
@@ -245,10 +164,9 @@ function onResize() {
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 window.addEventListener('resize', onResize);
-window.addEventListener('error', (e) => { console.error('Game error:', e.message); });
+
 function animate() {
   requestAnimationFrame(animate);
-  if (!isLoaded) return;
   const dt = Math.min(clock.getDelta(), 0.1);
   const cameraMove = cameraCtrl.update(dt);
   player.update(dt, collidables, cameraMove);
