@@ -27,8 +27,8 @@ const crosshairEl = document.getElementById('crosshair')
 function init() {
   // Сцена
   scene = new THREE.Scene()
-  scene.background = new THREE.Color(0x2a2a3a)
-  scene.fog = new THREE.Fog(0x12121a, 1, 45)
+  scene.background = new THREE.Color(0x1a1a2e)
+  scene.fog = new THREE.FogExp2(0x1a1a2e, 0.04)
 
   // Камера (first-person)
   camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
