@@ -149,40 +149,34 @@ function animate() {
     if (introStart === null) introStart = clock.elapsedTime
     const t = clock.elapsedTime - introStart
     const fadeEl = document.getElementById('intro-fade')
-    const smooth = (x) => x * x * (3 - 2 * x)
+    const sm = (x) => { x = Math.max(0, Math.min(1, x)); return x * x * x * (x * (6 * x - 15) + 10) }
     if (t < 0.6) {
-      // открывает глаза
       if (fadeEl) fadeEl.classList.add('hide')
       cameraCtrl.pitch = Math.PI / 2
       cameraCtrl.height = 0.2
       cameraCtrl.yaw = 0
       player.group.position.set(0, 0.5, -1.0)
     } else if (t < 2.0) {
-      // потихоньку поднимается
-      const k = smooth((t - 0.6) / 1.4)
-      cameraCtrl.pitch = Math.PI / 2 * (1 - k)
+      const k = sm((t - 0.6) / 1.4)
+      cameraCtrl.pitch = Math.PI / 2 * (1 - k) + 0.08 * Math.sin(k * Math.PI)
       cameraCtrl.height = 0.2 + 0.6 * k
       cameraCtrl.yaw = 0
       player.group.position.set(0, 0.5, -1.0 + 0.8 * k)
     } else if (t < 3.2) {
-      // осматривается
-      const k = smooth((t - 2.0) / 1.2)
-      cameraCtrl.pitch = 0
+      const k = sm((t - 2.0) / 1.2)
+      cameraCtrl.pitch = 0.05 * Math.sin(k * Math.PI * 2)
       cameraCtrl.height = 0.8
-      if (k < 0.5) cameraCtrl.yaw = 0.5 * smooth(k / 0.5)
-      else cameraCtrl.yaw = 0.5 - 0.8 * smooth((k - 0.5) / 0.5)
+      cameraCtrl.yaw = 0.35 * Math.sin(k * Math.PI * 2)
       player.group.position.set(0, 0.5, -0.2)
     } else if (t < 4.2) {
-      // поворачивается влево
-      const k = smooth((t - 3.2) / 1.0)
+      const k = sm((t - 3.2) / 1.0)
       cameraCtrl.pitch = 0
       cameraCtrl.height = 0.8
-      cameraCtrl.yaw = -0.3 + (Math.PI / 3 + 0.3) * k
+      cameraCtrl.yaw = -0.3 + (Math.PI / 3 + 0.3) * k + 0.08 * Math.sin(k * Math.PI)
       player.group.position.set(0, 0.5, -0.2 + 0.4 * k)
     } else if (t < 5.2) {
-      // встает (плавно, на месте поворота)
-      const k = smooth((t - 4.2) / 1.0)
-      cameraCtrl.pitch = 0
+      const k = sm((t - 4.2) / 1.0)
+      cameraCtrl.pitch = -0.12 * (1 - k)
       cameraCtrl.height = 0.8 + 0.7 * k
       cameraCtrl.yaw = Math.PI / 3
       player.group.position.set(0, 0.5 + 0.25 * k, 0.2 + 0.8 * k)
