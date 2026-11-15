@@ -92,7 +92,7 @@ export function createWorld(scene) {
 
   // Туман партиклами
   const fogGeo = new THREE.BufferGeometry()
-  const fogCount = 400
+  const fogCount = 150
   const fogPos = new Float32Array(fogCount * 3)
   for (let i = 0; i < fogCount; i++) {
     fogPos[i * 3] = (Math.random() - 0.5) * 70
@@ -129,7 +129,10 @@ export function createWorld(scene) {
         atten = pow(atten, 1.6) * uLightIntensity;
         vec3 base = vec3(0.25, 0.25, 0.28);
         vec3 col = mix(base, uLightColor, clamp(atten, 0.0, 1.0) * 0.25);
-        gl_FragColor = vec4(col, 0.18);
+        vec2 uv = gl_PointCoord - vec2(0.5);
+        float r = length(uv);
+        float alpha = 1.0 - smoothstep(0.25, 0.5, r);
+        gl_FragColor = vec4(col, 0.22 * alpha);
       }
     `,
     transparent: true,
