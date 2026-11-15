@@ -15,6 +15,7 @@ export class FirstPersonCamera {
     this.sensitivity = 0.002
     this.height = 1.5
     this.locked = false
+    this.intro = false
   }
 
   lock() { this.locked = true }
@@ -22,11 +23,13 @@ export class FirstPersonCamera {
   isLocked() { return this.locked }
 
   update(dt) {
-    const { x, y } = getMouseDelta()
-    if (x !== 0 || y !== 0) {
-      this.yaw -= x * this.sensitivity
-      this.pitch -= y * this.sensitivity
-      this.pitch = Math.max(-Math.PI / 2 + 0.01, Math.min(Math.PI / 2 - 0.01, this.pitch))
+    if (!this.intro) {
+      const { x, y } = getMouseDelta()
+      if (x !== 0 || y !== 0) {
+        this.yaw -= x * this.sensitivity
+        this.pitch -= y * this.sensitivity
+        this.pitch = Math.max(-Math.PI / 2 + 0.01, Math.min(Math.PI / 2 - 0.01, this.pitch))
+      }
     }
 
     // Камера позиционируется над игроком (уровень глаз)

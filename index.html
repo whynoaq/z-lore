@@ -14,6 +14,9 @@
     #jump-btn { position: absolute; right: 24px; bottom: 32px; width: 84px; height: 84px; border-radius: 50%; border: none; background: rgba(255,255,255,0.25); color: #fff; font-size: 1rem; font-weight: 600; z-index: 40; touch-action: none; display: none; }
     #jump-btn.active { display: block; }
     @media (pointer: coarse), (max-width: 768px) { #joystick, #jump-btn { display: block; } }
+      #intro-text { position: absolute; top: 40%; left: 50%; transform: translate(-50%,-50%); color: #fff; font-size: 2rem; font-weight: 600; text-shadow: 0 2px 8px rgba(0,0,0,0.8); z-index: 50; opacity: 0; transition: opacity 0.8s ease; pointer-events: none; }
+    #intro-text.show { opacity: 1; }
+    #intro-text.hide { opacity: 0; }
   </style>
 </head>
 <body>
@@ -21,6 +24,6 @@
     import * as THREE from './three.module.min.js';
     window.THREE = THREE;
   </script>
-  <script src="game.js?v=9" defer></script>
+  <script src="game.js?v=10" defer></script>
 </body>
 </html>

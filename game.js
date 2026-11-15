@@ -2,6 +2,9 @@
 const keys = {};
 let mouseDelta = { x: 0, y: 0 };
 let touchMove = { x: 0, z: 0, len: 0 };
+let introActive = true;
+let introStart = null;
+const INTRO_DURATION = 2.2;
 
 function isTouchDevice() {
   return (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || ('ontouchstart' in window) || (navigator.maxTouchPoints || 0) > 0;
@@ -295,6 +298,15 @@ function init() {
   collidables = createWorld(scene);
   cameraCtrl = new FirstPersonCamera(camera, player);
   clock = new THREE.Clock();
+  player.group.position.set(0, 0.5, 0);
+  cameraCtrl.intro = true;
+  cameraCtrl.pitch = -1.2;
+  cameraCtrl.height = 0.2;
+
+  const introText = document.createElement('div');
+  introText.id = 'intro-text';
+  introText.textContent = 'Где я?';
+  document.body.appendChild(introText);
 
   const touch = isTouchDevice();
   const mobile = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
@@ -336,6 +348,28 @@ window.addEventListener('resize', onResize);
 function animate() {
   requestAnimationFrame(animate);
   const dt = Math.min(clock.getDelta(), 0.1);
+
+  if (introActive) {
+    if (introStart === null) introStart = clock.elapsedTime;
+    const k = Math.min(1, (clock.elapsedTime - introStart) / INTRO_DURATION);
+    cameraCtrl.pitch = -1.2 * (1 - k);
+    cameraCtrl.height = 0.2 + (1.5 - 0.2) * k;
+    cameraCtrl.update(dt);
+    renderer.render(scene, camera);
+    if (k >= 1) {
+      introActive = false;
+      cameraCtrl.intro = false;
+      cameraCtrl.pitch = 0;
+      cameraCtrl.height = 1.5;
+      const el = document.getElementById('intro-text');
+      if (el) {
+        el.classList.add('show');
+        setTimeout(() => el.classList.add('hide'), 2000);
+      }
+    }
+    return;
+  }
+
   const cameraMove = cameraCtrl.update(dt);
   player.update(dt, collidables, cameraMove);
   renderer.render(scene, camera);

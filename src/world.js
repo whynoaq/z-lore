@@ -49,5 +49,14 @@ export function createWorld(scene) {
     collidables.push(mesh)
   })
 
+  // Кровать у точки спавна
+  const bedMat = new THREE.MeshStandardMaterial({ color: 0x8b4513 })
+  const bed = new THREE.Mesh(new THREE.BoxGeometry(2, 0.5, 3), bedMat)
+  bed.position.set(0, 0.25, 0)
+  bed.castShadow = true
+  bed.receiveShadow = true
+  scene.add(bed)
+  collidables.push(bed)
+
   return collidables
 }
