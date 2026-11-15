@@ -168,6 +168,9 @@ function animate() {
       if (pos.array[i * 3 + 2] > 35) pos.array[i * 3 + 2] = -35
     }
     pos.needsUpdate = true
+    if (window.__flashlight && fogClouds.material.uniforms) {
+      fogClouds.material.uniforms.uLightPos.value.copy(window.__flashlight.position)
+    }
   }
 
   if (window.__flashlight) {

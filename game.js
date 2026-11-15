@@ -223,13 +223,42 @@ function createWorld(scene) {
     fogPos[i * 3 + 2] = (Math.random() - 0.5) * 70;
   }
   fogGeo.setAttribute('position', new THREE.BufferAttribute(fogPos, 3));
-  const fogMat = new THREE.PointsMaterial({
-    color: 0xcccccc,
-    size: 16,
+  const fogMat = new THREE.ShaderMaterial({
+    uniforms: {
+      uLightPos: { value: new THREE.Vector3() },
+      uLightColor: { value: new THREE.Color(0xffaa55) },
+      uLightRange: { value: 35.0 },
+      uLightIntensity: { value: 1.2 }
+    },
+    vertexShader: `
+      varying vec3 vWorldPos;
+      void main() {
+        vec4 worldPos = modelMatrix * vec4(position, 1.0);
+        vWorldPos = worldPos.xyz;
+        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+        gl_PointSize = 18.0 * (300.0 / -mvPosition.z);
+        gl_Position = projectionMatrix * mvPosition;
+      }
+    `,
+    fragmentShader: `
+      uniform vec3 uLightPos;
+      uniform vec3 uLightColor;
+      uniform float uLightRange;
+      uniform float uLightIntensity;
+      varying vec3 vWorldPos;
+      void main() {
+        float d = distance(vWorldPos, uLightPos);
+        float atten = 1.0 - smoothstep(0.0, uLightRange, d);
+        atten = pow(atten, 1.6) * uLightIntensity;
+        vec3 base = vec3(0.08, 0.08, 0.1);
+        vec3 col = mix(base, uLightColor, clamp(atten, 0.0, 1.0) * 0.85);
+        vec2 uv = gl_PointCoord - vec2(0.5);
+        if (length(uv) > 0.5) discard;
+        gl_FragColor = vec4(col, 0.45);
+      }
+    `,
     transparent: true,
-    opacity: 0.22,
-    depthWrite: false,
-    sizeAttenuation: true
+    depthWrite: false
   });
   const fogClouds = new THREE.Points(fogGeo, fogMat);
   scene.add(fogClouds);
@@ -432,6 +461,9 @@ function animate() {
       if (pos.array[i * 3 + 2] > 35) pos.array[i * 3 + 2] = -35;
     }
     pos.needsUpdate = true;
+    if (window.__flashlight && fogClouds.material.uniforms) {
+      fogClouds.material.uniforms.uLightPos.value.copy(window.__flashlight.position);
+    }
   }
 
   if (window.__flashlight) {
