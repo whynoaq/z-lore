@@ -3,6 +3,7 @@ const keys = {};
 let mouseDelta = { x: 0, y: 0 };
 let touchMove = { x: 0, z: 0, len: 0 };
 let introActive = true;
+let flashlightOn = true;
 let introStart = null;
 const INTRO_DURATION = 5.2;
 
@@ -391,6 +392,19 @@ function init() {
 
   window.__flashLight = flashLight;
   window.__flashBeam = flashBeam;
+
+  const versionEl = document.createElement('div');
+  versionEl.id = 'version';
+  versionEl.textContent = 'v0.1.0';
+  document.body.appendChild(versionEl);
+
+  window.addEventListener('keydown', (e) => {
+    if (e.code === 'KeyF') {
+      flashlightOn = !flashlightOn;
+      flashLight.visible = flashlightOn;
+      flashBeam.visible = flashlightOn;
+    }
+  });
 
   clock = new THREE.Clock();
   player.group.position.set(0, 0.5, -1.0);

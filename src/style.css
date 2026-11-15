@@ -201,3 +201,15 @@ canvas {
   background: rgba(15, 20, 45, 0.2);
   mix-blend-mode: color;
 }
+
+
+#version {
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.75rem;
+  z-index: 50;
+  pointer-events: none;
+  font-family: monospace;
+}

@@ -17,6 +17,7 @@ import { createWorld } from './world.js'
 let scene, camera, renderer, player, cameraCtrl, collidables, clock
 let isLoaded = false
 let introActive = true
+let flashlightOn = true
 let introStart = null
 const INTRO_DURATION = 5.2
 
@@ -61,6 +62,19 @@ function init() {
 
   window.__flashLight = flashLight
   window.__flashBeam = flashBeam
+
+  const versionEl = document.createElement('div')
+  versionEl.id = 'version'
+  versionEl.textContent = 'v0.1.0'
+  document.body.appendChild(versionEl)
+
+  window.addEventListener('keydown', (e) => {
+    if (e.code === 'KeyF') {
+      flashlightOn = !flashlightOn
+      flashLight.visible = flashlightOn
+      flashBeam.visible = flashlightOn
+    }
+  })
 
   player.group.position.set(0, 0.5, -1.0)
   cameraCtrl.intro = true
