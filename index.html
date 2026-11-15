@@ -114,7 +114,11 @@
     </div>
     <div class="mobile-btn" id="btn-jump">ПРЫЖОК</div>
   </div>
-  <script src="https://unpkg.com/three@0.168.0/build/three.min.js"></script>
-  <script src="game.js"></script>
+  <script type="module">
+    import * as THREE from './three.module.min.js';
+    window.THREE = THREE;
+    console.log('Three.js loaded');
+  </script>
+  <script src="game.js" defer></script>
 </body>
 </html>
