@@ -333,4 +333,6 @@ function animate() {
   renderer.render(scene, camera);
 }
 init();
+window.__player = player;
+window.__cameraCtrl = cameraCtrl;
 animate();

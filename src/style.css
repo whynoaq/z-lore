@@ -129,6 +129,6 @@ canvas {
   display: none;
 }
 #jump-btn.active { display: block; }
-@media (pointer: coarse) {
+@media (pointer: coarse), (max-width: 768px) {
   #joystick, #jump-btn { display: block; }
 }

@@ -13,7 +13,7 @@
     #joystick-knob { position: absolute; top: 50%; left: 50%; width: 48px; height: 48px; margin: -24px 0 0 -24px; border-radius: 50%; background: rgba(255,255,255,0.55); pointer-events: none; }
     #jump-btn { position: absolute; right: 24px; bottom: 32px; width: 84px; height: 84px; border-radius: 50%; border: none; background: rgba(255,255,255,0.25); color: #fff; font-size: 1rem; font-weight: 600; z-index: 40; touch-action: none; display: none; }
     #jump-btn.active { display: block; }
-    @media (pointer: coarse) { #joystick, #jump-btn { display: block; } }
+    @media (pointer: coarse), (max-width: 768px) { #joystick, #jump-btn { display: block; } }
   </style>
 </head>
 <body>
