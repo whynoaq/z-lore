@@ -424,7 +424,7 @@ function animate() {
       cameraCtrl.pitch = 0;
       cameraCtrl.height = 1.5;
       cameraCtrl.yaw = Math.PI / 3;
-      player.group.position.y = 0.75;
+      player.group.position.set(0, 0.75, 2.0);
       const el = document.getElementById('intro-text');
       if (el) {
         el.classList.add('show');
