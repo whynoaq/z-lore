@@ -18,7 +18,7 @@ let scene, camera, renderer, player, cameraCtrl, collidables, clock
 let isLoaded = false
 let introActive = true
 let introStart = null
-const INTRO_DURATION = 2.2
+const INTRO_DURATION = 3.6
 
 const loadingEl = document.getElementById('loading')
 const uiEl = document.getElementById('ui')
@@ -143,22 +143,37 @@ function animate() {
 
   if (introActive) {
     if (introStart === null) introStart = clock.elapsedTime
-    const k = Math.min(1, (clock.elapsedTime - introStart) / INTRO_DURATION)
-    cameraCtrl.pitch = -1.2 * (1 - k)
-    cameraCtrl.height = 0.2 + (1.5 - 0.2) * k
-    cameraCtrl.update(dt)
-    renderer.render(scene, camera)
-    if (k >= 1) {
+    const t = clock.elapsedTime - introStart
+    if (t < 1.2) {
+      const k = t / 1.2
+      cameraCtrl.pitch = -1.2 + 0.6 * k
+      cameraCtrl.height = 0.2 + 0.6 * k
+      cameraCtrl.yaw = 0
+    } else if (t < 2.4) {
+      const k = (t - 1.2) / 1.2
+      cameraCtrl.pitch = -0.6
+      cameraCtrl.height = 0.8
+      cameraCtrl.yaw = (Math.PI / 3) * k
+    } else if (t < 3.6) {
+      const k = (t - 2.4) / 1.2
+      cameraCtrl.pitch = -0.6 * (1 - k)
+      cameraCtrl.height = 0.8 + 0.7 * k
+      cameraCtrl.yaw = Math.PI / 3
+    } else {
       introActive = false
       cameraCtrl.intro = false
       cameraCtrl.pitch = 0
       cameraCtrl.height = 1.5
+      cameraCtrl.yaw = Math.PI / 3
+      player.group.position.y = 0.75
       const el = document.getElementById('intro-text')
       if (el) {
         el.classList.add('show')
         setTimeout(() => el.classList.add('hide'), 2000)
       }
     }
+    cameraCtrl.update(dt)
+    renderer.render(scene, camera)
     return
   }
 
