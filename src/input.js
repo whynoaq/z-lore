@@ -17,7 +17,7 @@ export function setupInput() {
     keys[e.code] = false
   })
   window.addEventListener('mousemove', (e) => {
-    if (document.pointerLockElement === document.body) {
+    if (document.pointerLockElement) {
       mouseDelta.x = e.movementX
       mouseDelta.y = e.movementY
     }
@@ -101,5 +101,5 @@ export function exitPointerLock() {
 }
 
 export function isPointerLocked() {
-  return document.pointerLockElement === document.body
+  return !!document.pointerLockElement
 }

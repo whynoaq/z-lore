@@ -9,7 +9,7 @@ function isTouchDevice() {
 
 window.addEventListener('keydown', (e) => { if (['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code)) e.preventDefault(); keys[e.code] = true; });
 window.addEventListener('keyup', (e) => { keys[e.code] = false; });
-window.addEventListener('mousemove', (e) => { if (document.pointerLockElement === document.body) { mouseDelta.x = e.movementX; mouseDelta.y = e.movementY; } });
+window.addEventListener('mousemove', (e) => { if (document.pointerLockElement) { mouseDelta.x = e.movementX; mouseDelta.y = e.movementY; } });
 
 function isKey(code) { return !!keys[code]; }
 
@@ -44,7 +44,7 @@ function getInputVector() {
 function getMouseDelta() { const d = { x: mouseDelta.x, y: mouseDelta.y }; mouseDelta.x = 0; mouseDelta.y = 0; return d; }
 function requestPointerLock() { document.body.requestPointerLock(); }
 function exitPointerLock() { document.exitPointerLock(); }
-function isPointerLocked() { return document.pointerLockElement === document.body; }
+function isPointerLocked() { return !!document.pointerLockElement; }
 
 /* ---------- camera ---------- */
 const _euler = new THREE.Euler();
@@ -309,7 +309,7 @@ function init() {
       if (document.pointerLockElement !== document.body) document.body.requestPointerLock();
     });
     document.addEventListener('pointerlockchange', () => {
-      cameraCtrl.locked = document.pointerLockElement === document.body;
+      cameraCtrl.locked = !!document.pointerLockElement;
       if (cameraCtrl.locked) cameraCtrl.lock(); else cameraCtrl.unlock();
     });
   }
