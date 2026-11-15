@@ -178,6 +178,41 @@ function createWorld(scene) {
     scene.add(mesh);
     collidables.push(mesh);
   });
+
+  const woodMat = new THREE.MeshStandardMaterial({ color: 0x5c3a21 });
+  const mattressMat = new THREE.MeshStandardMaterial({ color: 0xe8e0d0 });
+  const pillowMat = new THREE.MeshStandardMaterial({ color: 0xffffff });
+
+  const frame = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.2, 3.2), woodMat);
+  frame.position.set(0, 0.1, 0);
+  frame.castShadow = true;
+  frame.receiveShadow = true;
+  scene.add(frame);
+
+  const legGeo = new THREE.BoxGeometry(0.15, 0.2, 0.15);
+  [[-0.95, -1.45], [0.95, -1.45], [-0.95, 1.45], [0.95, 1.45]].forEach(([x, z]) => {
+    const leg = new THREE.Mesh(legGeo, woodMat);
+    leg.position.set(x, 0.1, z);
+    leg.castShadow = true;
+    scene.add(leg);
+  });
+
+  const mattress = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.3, 3.0), mattressMat);
+  mattress.position.set(0, 0.35, 0);
+  mattress.castShadow = true;
+  mattress.receiveShadow = true;
+  scene.add(mattress);
+  collidables.push(mattress);
+
+  const pillow = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.15, 0.6), pillowMat);
+  pillow.position.set(0, 0.575, -1.1);
+  pillow.castShadow = true;
+  scene.add(pillow);
+
+  const headboard = new THREE.Mesh(new THREE.BoxGeometry(2.2, 1.0, 0.15), woodMat);
+  headboard.position.set(0, 0.6, -1.675);
+  headboard.castShadow = true;
+  scene.add(headboard);
   return collidables;
 }
 
