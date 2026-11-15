@@ -382,14 +382,8 @@ function init() {
   collidables = createWorld(scene);
   cameraCtrl = new FirstPersonCamera(camera, player);
 
-  const beamGeo = new THREE.ConeGeometry(2.5, 20, 16, 1, true);
-  const beamMat = new THREE.MeshBasicMaterial({ color: 0xffaa55, transparent: true, opacity: 0.15, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
-  const flashBeam = new THREE.Mesh(beamGeo, beamMat);
-  scene.add(flashBeam);
 
-  window.__flashBeam = flashBeam;
-
-  const flashLight = new THREE.SpotLight(0xffaa55, 20, 100, Math.PI / 4, 0.3, 2);
+  const flashLight = new THREE.SpotLight(0xffffff, 40, 150, Math.PI / 5, 0.15, 1);
   const flashTarget = new THREE.Object3D();
   scene.add(flashLight, flashTarget);
   flashLight.target = flashTarget;
@@ -405,7 +399,6 @@ function init() {
     if (e.code === 'KeyF') {
       flashlightOn = !flashlightOn;
       if (window.__flashLight) window.__flashLight.visible = flashlightOn;
-      if (window.__flashBeam) window.__flashBeam.visible = flashlightOn;
     }
   });
 
@@ -472,18 +465,11 @@ function animate() {
   requestAnimationFrame(animate);
   const dt = Math.min(clock.getDelta(), 0.1);
 
-  if (window.__flashBeam) {
-    const dir = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
-    window.__flashBeam.position.copy(camera.position).add(dir.clone().multiplyScalar(10));
-    window.__flashBeam.quaternion.copy(camera.quaternion);
-    window.__flashBeam.rotateX(-Math.PI / 2);
-
   if (window.__flashLight) {
     window.__flashLight.position.copy(camera.position);
     const dir2 = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
     window.__flashTarget.position.copy(camera.position).add(dir2.multiplyScalar(12));
     window.__flashTarget.updateMatrixWorld();
-  }
   }
 
   const fogClouds = scene.userData.fogClouds;
