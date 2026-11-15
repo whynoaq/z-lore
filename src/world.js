@@ -4,10 +4,10 @@ export function createWorld(scene) {
   const collidables = []
 
   // Освещение
-  const ambient = new THREE.AmbientLight(0x8899bb, 0.25)
+  const ambient = new THREE.AmbientLight(0x8899bb, 0.35)
   scene.add(ambient)
 
-  const dirLight = new THREE.DirectionalLight(0x99aacc, 0.7)
+  const dirLight = new THREE.DirectionalLight(0x99aacc, 0.9)
   dirLight.position.set(10, 20, 10)
   dirLight.castShadow = true
   dirLight.shadow.camera.left = -30

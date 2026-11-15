@@ -141,9 +141,9 @@ class Player {
 /* ---------- world ---------- */
 function createWorld(scene) {
   const collidables = [];
-  const ambient = new THREE.AmbientLight(0x8899bb, 0.25);
+  const ambient = new THREE.AmbientLight(0x8899bb, 0.35);
   scene.add(ambient);
-  const dirLight = new THREE.DirectionalLight(0x99aacc, 0.7);
+  const dirLight = new THREE.DirectionalLight(0x99aacc, 0.9);
   dirLight.position.set(10, 20, 10);
   dirLight.castShadow = true;
   dirLight.shadow.camera.left = -30;
@@ -320,7 +320,7 @@ function init() {
   console.log('init started');
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0x12121a);
-  scene.fog = new THREE.Fog(0x12121a, 1, 35);
+  scene.fog = new THREE.Fog(0x12121a, 1, 45);
   camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);

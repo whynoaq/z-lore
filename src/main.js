@@ -28,7 +28,7 @@ function init() {
   // Сцена
   scene = new THREE.Scene()
   scene.background = new THREE.Color(0x12121a)
-  scene.fog = new THREE.Fog(0x12121a, 1, 35)
+  scene.fog = new THREE.Fog(0x12121a, 1, 45)
 
   // Камера (first-person)
   camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
