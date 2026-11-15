@@ -381,19 +381,17 @@ function init() {
   collidables = createWorld(scene);
   cameraCtrl = new FirstPersonCamera(camera, player);
 
-  const flashlight = new THREE.SpotLight(0xffaa55, 25, 120, Math.PI / 3, 0.3, 2);
-  const flashTarget = new THREE.Object3D();
-  scene.add(flashlight, flashTarget);
-  flashlight.target = flashTarget;
-  window.__flashlight = flashlight;
-  window.__flashTarget = flashTarget;
+  const flashLight = new THREE.PointLight(0xffaa55, 12, 100);
+  scene.add(flashLight);
 
-  const beamGeo = new THREE.ConeGeometry(3.5, 18, 16, 1, true);
-  const beamMat = new THREE.MeshBasicMaterial({ color: 0xffaa55, transparent: true, opacity: 0.06, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
-  const beam = new THREE.Mesh(beamGeo, beamMat);
-  beam.rotation.x = -Math.PI / 2;
-  scene.add(beam);
-  window.__beam = beam;
+  const beamGeo = new THREE.ConeGeometry(2.5, 20, 16, 1, true);
+  const beamMat = new THREE.MeshBasicMaterial({ color: 0xffaa55, transparent: true, opacity: 0.1, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
+  const flashBeam = new THREE.Mesh(beamGeo, beamMat);
+  scene.add(flashBeam);
+
+  window.__flashLight = flashLight;
+  window.__flashBeam = flashBeam;
+
   clock = new THREE.Clock();
   player.group.position.set(0, 0.5, -1.0);
   cameraCtrl.intro = true;
@@ -457,6 +455,16 @@ function animate() {
   requestAnimationFrame(animate);
   const dt = Math.min(clock.getDelta(), 0.1);
 
+  if (window.__flashLight) {
+    window.__flashLight.position.copy(camera.position);
+  }
+  if (window.__flashBeam) {
+    const dir = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
+    window.__flashBeam.position.copy(camera.position).add(dir.clone().multiplyScalar(10));
+    window.__flashBeam.quaternion.copy(camera.quaternion);
+    window.__flashBeam.rotateX(-Math.PI / 2);
+  }
+
   const fogClouds = scene.userData.fogClouds;
   if (fogClouds) {
     const pos = fogClouds.geometry.attributes.position;
@@ -466,19 +474,8 @@ function animate() {
       if (pos.array[i * 3 + 2] > 35) pos.array[i * 3 + 2] = -35;
     }
     pos.needsUpdate = true;
-    if (window.__flashlight && fogClouds.material.uniforms) {
-      fogClouds.material.uniforms.uLightPos.value.copy(window.__flashlight.position);
-    }
-  }
-
-  if (window.__flashlight) {
-    window.__flashlight.position.copy(camera.position);
-    const dir = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
-    window.__flashTarget.position.copy(camera.position).add(dir.multiplyScalar(12));
-    if (window.__beam) {
-      window.__beam.position.copy(camera.position).add(dir.clone().multiplyScalar(9));
-      window.__beam.quaternion.copy(camera.quaternion);
-      window.__beam.rotateX(-Math.PI / 2);
+    if (window.__flashLight && fogClouds.material.uniforms) {
+      fogClouds.material.uniforms.uLightPos.value.copy(window.__flashLight.position);
     }
   }
 
