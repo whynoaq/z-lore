@@ -4,10 +4,10 @@ export function createWorld(scene) {
   const collidables = []
 
   // Освещение
-  const ambient = new THREE.AmbientLight(0xffffff, 0.5)
+  const ambient = new THREE.AmbientLight(0x8899bb, 0.25)
   scene.add(ambient)
 
-  const dirLight = new THREE.DirectionalLight(0xffffff, 1.2)
+  const dirLight = new THREE.DirectionalLight(0x99aacc, 0.7)
   dirLight.position.set(10, 20, 10)
   dirLight.castShadow = true
   dirLight.shadow.camera.left = -30
@@ -20,7 +20,7 @@ export function createWorld(scene) {
 
   // Пол
   const floorGeo = new THREE.PlaneGeometry(100, 100)
-  const floorMat = new THREE.MeshStandardMaterial({ color: 0x3a3a3a })
+  const floorMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a })
   const floor = new THREE.Mesh(floorGeo, floorMat)
   floor.rotation.x = -Math.PI / 2
   floor.receiveShadow = true
@@ -28,7 +28,7 @@ export function createWorld(scene) {
   collidables.push(floor)
 
   // Платформы
-  const platformMat = new THREE.MeshStandardMaterial({ color: 0x6b6b6b })
+  const platformMat = new THREE.MeshStandardMaterial({ color: 0x2a2a2a })
 
   const platforms = [
     { size: [6, 1, 6], pos: [0, 2, 6] },
@@ -50,9 +50,9 @@ export function createWorld(scene) {
   })
 
   // Кровать у точки спавна (детализированная)
-  const woodMat = new THREE.MeshStandardMaterial({ color: 0x5c3a21 })
-  const mattressMat = new THREE.MeshStandardMaterial({ color: 0xe8e0d0 })
-  const pillowMat = new THREE.MeshStandardMaterial({ color: 0xffffff })
+  const woodMat = new THREE.MeshStandardMaterial({ color: 0x2a1a10 })
+  const mattressMat = new THREE.MeshStandardMaterial({ color: 0x4a4a4a })
+  const pillowMat = new THREE.MeshStandardMaterial({ color: 0x3a3a3a })
 
   // Рама
   const frame = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.2, 3.2), woodMat)

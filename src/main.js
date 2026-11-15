@@ -27,8 +27,8 @@ const crosshairEl = document.getElementById('crosshair')
 function init() {
   // Сцена
   scene = new THREE.Scene()
-  scene.background = new THREE.Color(0x87ceeb)
-  scene.fog = new THREE.Fog(0x87ceeb, 1, 60)
+  scene.background = new THREE.Color(0x12121a)
+  scene.fog = new THREE.Fog(0x12121a, 1, 35)
 
   // Камера (first-person)
   camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
@@ -69,6 +69,13 @@ function init() {
 
   // Часы
   clock = new THREE.Clock()
+
+  // Мрачные оверлеи (Cry of Fear style)
+  ;['tint','vignette','grain'].forEach((id) => {
+    const el = document.createElement('div')
+    el.id = id
+    document.body.appendChild(el)
+  })
 
   // Overlay для входа
   const overlay = document.createElement('div')

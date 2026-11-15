@@ -141,9 +141,9 @@ class Player {
 /* ---------- world ---------- */
 function createWorld(scene) {
   const collidables = [];
-  const ambient = new THREE.AmbientLight(0xffffff, 0.5);
+  const ambient = new THREE.AmbientLight(0x8899bb, 0.25);
   scene.add(ambient);
-  const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
+  const dirLight = new THREE.DirectionalLight(0x99aacc, 0.7);
   dirLight.position.set(10, 20, 10);
   dirLight.castShadow = true;
   dirLight.shadow.camera.left = -30;
@@ -154,13 +154,13 @@ function createWorld(scene) {
   dirLight.shadow.mapSize.height = 2048;
   scene.add(dirLight);
   const floorGeo = new THREE.PlaneGeometry(100, 100);
-  const floorMat = new THREE.MeshStandardMaterial({ color: 0x3a3a3a });
+  const floorMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a });
   const floor = new THREE.Mesh(floorGeo, floorMat);
   floor.rotation.x = -Math.PI / 2;
   floor.receiveShadow = true;
   scene.add(floor);
   collidables.push(floor);
-  const platformMat = new THREE.MeshStandardMaterial({ color: 0x6b6b6b });
+  const platformMat = new THREE.MeshStandardMaterial({ color: 0x2a2a2a });
   const platforms = [
     { size: [6, 1, 6], pos: [0, 2, 6] },
     { size: [5, 1, 5], pos: [-8, 4, 2] },
@@ -179,9 +179,9 @@ function createWorld(scene) {
     collidables.push(mesh);
   });
 
-  const woodMat = new THREE.MeshStandardMaterial({ color: 0x5c3a21 });
-  const mattressMat = new THREE.MeshStandardMaterial({ color: 0xe8e0d0 });
-  const pillowMat = new THREE.MeshStandardMaterial({ color: 0xffffff });
+  const woodMat = new THREE.MeshStandardMaterial({ color: 0x2a1a10 });
+  const mattressMat = new THREE.MeshStandardMaterial({ color: 0x4a4a4a });
+  const pillowMat = new THREE.MeshStandardMaterial({ color: 0x3a3a3a });
 
   const frame = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.2, 3.2), woodMat);
   frame.position.set(0, 0.1, 0);
@@ -319,8 +319,8 @@ let scene, camera, renderer, player, cameraCtrl, collidables, clock;
 function init() {
   console.log('init started');
   scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x87ceeb);
-  scene.fog = new THREE.Fog(0x87ceeb, 1, 60);
+  scene.background = new THREE.Color(0x12121a);
+  scene.fog = new THREE.Fog(0x12121a, 1, 35);
   camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -346,6 +346,13 @@ function init() {
   introText.id = 'intro-text';
   introText.textContent = 'Где я?';
   document.body.appendChild(introText);
+
+  // Мрачные оверлеи (Cry of Fear style)
+  ['tint','vignette','grain'].forEach((id) => {
+    const el = document.createElement('div');
+    el.id = id;
+    document.body.appendChild(el);
+  });
 
   const touch = isTouchDevice();
   const mobile = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
