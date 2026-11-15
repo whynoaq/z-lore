@@ -57,13 +57,14 @@ function init() {
   // Overlay для входа
   const overlay = document.createElement('div')
   overlay.id = 'overlay'
+  const mobile = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches)
   const touch = isTouchDevice()
-  overlay.innerHTML = touch
+  overlay.innerHTML = mobile
     ? `<div><h2>3D Платформер (от первого лица)</h2><p>Коснитесь экрана, чтобы начать</p><p style="font-size:0.8rem;opacity:0.8;margin-top:8px">Джойстик — движение • Свайп справа — обзор • Кнопка — прыжок</p></div>`
     : `<div><h2>3D Платформер (от первого лица)</h2><p>Нажмите мышкой, чтобы начать</p><p style="font-size:0.8rem;opacity:0.8;margin-top:8px">WASD — движение • Пробел — прыжок • Мышь — обзор</p></div>`
   document.body.appendChild(overlay)
 
-  if (touch) {
+  if (mobile) {
     overlay.style.display = 'none'
     if (uiEl) uiEl.style.display = 'none'
     if (crosshairEl) crosshairEl.style.display = 'block'
@@ -74,6 +75,19 @@ function init() {
       requestPointerLock()
     })
   }
+
+  if (!mobile && touch) {
+    createMobileControls()
+  }
+
+  document.addEventListener('pointerlockchange', () => {
+    const locked = isPointerLocked()
+    if (uiEl) uiEl.style.display = locked ? 'none' : ''
+    if (crosshairEl) crosshairEl.style.display = locked ? 'block' : 'none'
+    overlay.style.display = locked ? 'none' : ''
+    if (locked) cameraCtrl.lock()
+    else cameraCtrl.unlock()
+  })
 
   document.addEventListener('pointerlockchange', () => {
     const locked = isPointerLocked()

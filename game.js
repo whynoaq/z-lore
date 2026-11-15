@@ -4,7 +4,7 @@ let mouseDelta = { x: 0, y: 0 };
 let touchMove = { x: 0, z: 0, len: 0 };
 
 function isTouchDevice() {
-  return !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
+  return (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || ('ontouchstart' in window) || (navigator.maxTouchPoints || 0) > 0;
 }
 
 window.addEventListener('keydown', (e) => { if (['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code)) e.preventDefault(); keys[e.code] = true; });
@@ -292,14 +292,15 @@ function init() {
   clock = new THREE.Clock();
 
   const touch = isTouchDevice();
+  const mobile = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
   const overlay = document.createElement('div');
   overlay.id = 'overlay';
-  overlay.innerHTML = touch
+  overlay.innerHTML = mobile
     ? '<div><h2>3D Платформер (от первого лица)</h2><p>Коснитесь экрана, чтобы начать</p><p style="font-size:0.8rem;opacity:0.8;margin-top:8px">Джойстик — движение • Свайп справа — обзор • Кнопка — прыжок</p></div>'
     : '<div><h2>3D Платформер (от первого лица)</h2><p>Нажмите мышкой, чтобы начать</p><p style="font-size:0.8rem;opacity:0.8;margin-top:8px">WASD — движение • Пробел — прыжок • Мышь — обзор</p></div>';
   document.body.appendChild(overlay);
 
-  if (touch) {
+  if (mobile) {
     overlay.style.display = 'none';
     cameraCtrl.lock();
     createMobileControls();
@@ -311,6 +312,10 @@ function init() {
       cameraCtrl.locked = document.pointerLockElement === document.body;
       if (cameraCtrl.locked) cameraCtrl.lock(); else cameraCtrl.unlock();
     });
+  }
+
+  if (!mobile && touch) {
+    createMobileControls();
   }
 }
 function onResize() {

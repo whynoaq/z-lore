@@ -3,7 +3,7 @@ let mouseDelta = { x: 0, y: 0 }
 let touchMove = { x: 0, z: 0, len: 0 }
 
 export function isTouchDevice() {
-  return !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches)
+  return (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || ('ontouchstart' in window) || (navigator.maxTouchPoints || 0) > 0
 }
 
 export function setupInput() {
