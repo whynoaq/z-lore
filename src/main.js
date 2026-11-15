@@ -53,7 +53,7 @@ function init() {
   cameraCtrl = new FirstPersonCamera(camera, player)
 
 
-  const flashLight = new THREE.SpotLight(0xffffff, 40, 150, Math.PI / 5, 0.15, 1)
+  const flashLight = new THREE.SpotLight(0xffaa33, 40, 150, Math.PI / 4, 0.6, 1)
   const flashTarget = new THREE.Object3D()
   scene.add(flashLight, flashTarget)
   flashLight.target = flashTarget
