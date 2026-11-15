@@ -224,10 +224,10 @@ function createWorld(scene) {
   }
   fogGeo.setAttribute('position', new THREE.BufferAttribute(fogPos, 3));
   const fogMat = new THREE.PointsMaterial({
-    color: 0x666677,
-    size: 14,
+    color: 0xcccccc,
+    size: 16,
     transparent: true,
-    opacity: 0.18,
+    opacity: 0.22,
     depthWrite: false,
     sizeAttenuation: true
   });
@@ -354,7 +354,7 @@ function init() {
   collidables = createWorld(scene);
   cameraCtrl = new FirstPersonCamera(camera, player);
 
-  const flashlight = new THREE.SpotLight(0xffaa55, 8, 60, Math.PI / 4, 0.5, 2);
+  const flashlight = new THREE.SpotLight(0xffaa55, 8, 90, Math.PI / 4, 0.5, 2);
   const flashTarget = new THREE.Object3D();
   scene.add(flashlight, flashTarget);
   flashlight.target = flashTarget;

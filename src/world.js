@@ -101,10 +101,10 @@ export function createWorld(scene) {
   }
   fogGeo.setAttribute('position', new THREE.BufferAttribute(fogPos, 3))
   const fogMat = new THREE.PointsMaterial({
-    color: 0x666677,
-    size: 14,
+    color: 0xcccccc,
+    size: 16,
     transparent: true,
-    opacity: 0.18,
+    opacity: 0.22,
     depthWrite: false,
     sizeAttenuation: true
   })
