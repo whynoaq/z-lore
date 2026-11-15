@@ -388,9 +388,12 @@ function init() {
   window.__flashlight = flashlight;
   window.__flashTarget = flashTarget;
 
-  const flashPoint = new THREE.PointLight(0xffaa55, 6, 50);
-  scene.add(flashPoint);
-  window.__flashPoint = flashPoint;
+  const beamGeo = new THREE.ConeGeometry(3.5, 18, 16, 1, true);
+  const beamMat = new THREE.MeshBasicMaterial({ color: 0xffaa55, transparent: true, opacity: 0.06, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
+  const beam = new THREE.Mesh(beamGeo, beamMat);
+  beam.rotation.x = -Math.PI / 2;
+  scene.add(beam);
+  window.__beam = beam;
   clock = new THREE.Clock();
   player.group.position.set(0, 0.5, -1.0);
   cameraCtrl.intro = true;
@@ -472,7 +475,11 @@ function animate() {
     window.__flashlight.position.copy(camera.position);
     const dir = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
     window.__flashTarget.position.copy(camera.position).add(dir.multiplyScalar(12));
-    if (window.__flashPoint) window.__flashPoint.position.copy(camera.position);
+    if (window.__beam) {
+      window.__beam.position.copy(camera.position).add(dir.clone().multiplyScalar(9));
+      window.__beam.quaternion.copy(camera.quaternion);
+      window.__beam.rotateX(-Math.PI / 2);
+    }
   }
 
   if (introActive) {
