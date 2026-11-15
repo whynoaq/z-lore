@@ -3,7 +3,12 @@ import {
   setupInput,
   requestPointerLock,
   exitPointerLock,
-  isPointerLocked
+  isPointerLocked,
+  setTouchMove,
+  clearTouchMove,
+  requestJump,
+  addLookDelta,
+  isTouchDevice
 } from './input.js'
 import { Player } from './player.js'
 import { FirstPersonCamera } from './camera.js'
@@ -49,26 +54,31 @@ function init() {
   // Часы
   clock = new THREE.Clock()
 
-  // Overlay для входа (браузер требует пользовательское взаимодействие перед pointer lock)
+  // Overlay для входа
   const overlay = document.createElement('div')
   overlay.id = 'overlay'
-  overlay.innerHTML = `
-    <div>
-      <h2>3D Платформер (от первого лица)</h2>
-      <p>Нажмите мышкой, чтобы начать</p>
-      <p style="font-size:0.8rem;opacity:0.8;margin-top:8px">WASD — движение • Пробел — прыжок • Мышь — обзор</p>
-    </div>
-  `
+  const touch = isTouchDevice()
+  overlay.innerHTML = touch
+    ? `<div><h2>3D Платформер (от первого лица)</h2><p>Коснитесь экрана, чтобы начать</p><p style="font-size:0.8rem;opacity:0.8;margin-top:8px">Джойстик — движение • Свайп справа — обзор • Кнопка — прыжок</p></div>`
+    : `<div><h2>3D Платформер (от первого лица)</h2><p>Нажмите мышкой, чтобы начать</p><p style="font-size:0.8rem;opacity:0.8;margin-top:8px">WASD — движение • Пробел — прыжок • Мышь — обзор</p></div>`
   document.body.appendChild(overlay)
 
-  overlay.addEventListener('click', () => {
-    requestPointerLock()
-  })
+  if (touch) {
+    overlay.style.display = 'none'
+    if (uiEl) uiEl.style.display = 'none'
+    if (crosshairEl) crosshairEl.style.display = 'block'
+    cameraCtrl.lock()
+    createMobileControls()
+  } else {
+    overlay.addEventListener('click', () => {
+      requestPointerLock()
+    })
+  }
 
   document.addEventListener('pointerlockchange', () => {
     const locked = isPointerLocked()
-    uiEl.style.display = locked ? 'none' : ''
-    crosshairEl.style.display = locked ? 'block' : 'none'
+    if (uiEl) uiEl.style.display = locked ? 'none' : ''
+    if (crosshairEl) crosshairEl.style.display = locked ? 'block' : 'none'
     overlay.style.display = locked ? 'none' : ''
     if (locked) cameraCtrl.lock()
     else cameraCtrl.unlock()
@@ -106,6 +116,97 @@ function animate() {
   player.update(dt, collidables, cameraMove)
 
   renderer.render(scene, camera)
+}
+
+function createMobileControls() {
+  const joystick = document.createElement('div')
+  joystick.id = 'joystick'
+  const knob = document.createElement('div')
+  knob.id = 'joystick-knob'
+  joystick.appendChild(knob)
+  document.body.appendChild(joystick)
+
+  const jump = document.createElement('button')
+  jump.id = 'jump-btn'
+  jump.textContent = 'Прыжок'
+  document.body.appendChild(jump)
+
+  joystick.classList.add('active')
+  jump.classList.add('active')
+
+  let joyTouchId = null
+  let joyCenter = { x: 0, y: 0 }
+  const joyRadius = 50
+
+  function updateJoy(cx, cy) {
+    const dx = cx - joyCenter.x
+    const dy = cy - joyCenter.y
+    const dist = Math.hypot(dx, dy)
+    const clamped = Math.min(dist, joyRadius)
+    const ang = Math.atan2(dy, dx)
+    const kx = Math.cos(ang) * clamped
+    const ky = Math.sin(ang) * clamped
+    knob.style.transform = `translate(${kx}px, ${ky}px)`
+    setTouchMove(kx / joyRadius, ky / joyRadius)
+  }
+
+  const lookTouches = {}
+
+  function handleTouchStart(e) {
+    for (const t of e.changedTouches) {
+      const target = t.target
+      if (target === joystick || joystick.contains(target)) {
+        joyTouchId = t.identifier
+        const rect = joystick.getBoundingClientRect()
+        joyCenter = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }
+        updateJoy(t.clientX, t.clientY)
+        e.preventDefault()
+      } else if (target === jump) {
+        requestJump()
+        e.preventDefault()
+      } else {
+        lookTouches[t.identifier] = { x: t.clientX, y: t.clientY }
+      }
+    }
+  }
+
+  function handleTouchMove(e) {
+    let prevent = false
+    for (const t of e.changedTouches) {
+      if (t.identifier === joyTouchId) {
+        updateJoy(t.clientX, t.clientY)
+        prevent = true
+      } else if (lookTouches[t.identifier]) {
+        const prev = lookTouches[t.identifier]
+        addLookDelta(t.clientX - prev.x, t.clientY - prev.y)
+        lookTouches[t.identifier] = { x: t.clientX, y: t.clientY }
+        prevent = true
+      }
+    }
+    if (prevent) e.preventDefault()
+  }
+
+  function handleTouchEnd(e) {
+    for (const t of e.changedTouches) {
+      if (t.identifier === joyTouchId) {
+        joyTouchId = null
+        knob.style.transform = 'translate(0px, 0px)'
+        clearTouchMove()
+      }
+      delete lookTouches[t.identifier]
+    }
+  }
+
+  document.addEventListener('touchstart', handleTouchStart, { passive: false })
+  document.addEventListener('touchmove', handleTouchMove, { passive: false })
+  document.addEventListener('touchend', handleTouchEnd, { passive: false })
+  document.addEventListener('touchcancel', handleTouchEnd, { passive: false })
+
+  jump.addEventListener('touchstart', (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    requestJump()
+  }, { passive: false })
 }
 
 init()

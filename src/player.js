@@ -28,7 +28,7 @@ export class Player {
     if (input.len > 0) {
       _move.addScaledVector(forward, -input.z)  // W/S
       _move.addScaledVector(right, input.x)     // A/D
-      _move.normalize()
+      if (_move.lengthSq() > 0) _move.normalize().multiplyScalar(input.len)
     }
 
     _targetVelocity.set(_move.x * this.speed, this.velocity.y, _move.z * this.speed)

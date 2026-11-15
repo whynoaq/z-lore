@@ -22,8 +22,8 @@ export class FirstPersonCamera {
   isLocked() { return this.locked }
 
   update(dt) {
-    if (this.locked) {
-      const { x, y } = getMouseDelta()
+    const { x, y } = getMouseDelta()
+    if (x !== 0 || y !== 0) {
       this.yaw -= x * this.sensitivity
       this.pitch -= y * this.sensitivity
       this.pitch = Math.max(-Math.PI / 2 + 0.01, Math.min(Math.PI / 2 - 0.01, this.pitch))
