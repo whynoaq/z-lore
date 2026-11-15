@@ -306,7 +306,10 @@ function init() {
     createMobileControls();
   } else {
     overlay.addEventListener('click', () => {
-      if (document.pointerLockElement !== document.body) document.body.requestPointerLock();
+      if (!document.pointerLockElement) document.body.requestPointerLock();
+    });
+    window.addEventListener('click', () => {
+      if (!document.pointerLockElement) document.body.requestPointerLock();
     });
     document.addEventListener('pointerlockchange', () => {
       cameraCtrl.locked = !!document.pointerLockElement;

@@ -74,6 +74,9 @@ function init() {
     overlay.addEventListener('click', () => {
       requestPointerLock()
     })
+    window.addEventListener('click', () => {
+      if (!isPointerLocked()) requestPointerLock()
+    })
   }
 
   if (!mobile && touch) {
