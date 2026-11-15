@@ -4,7 +4,7 @@ let mouseDelta = { x: 0, y: 0 };
 let touchMove = { x: 0, z: 0, len: 0 };
 
 function isTouchDevice() {
-  return (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || (('ontouchstart' in window) && (navigator.maxTouchPoints || 0) > 0);
+  return !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
 }
 
 window.addEventListener('keydown', (e) => { if (['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code)) e.preventDefault(); keys[e.code] = true; });
@@ -214,6 +214,7 @@ function createMobileControls() {
   const lookTouches = {};
 
   function handleTouchStart(e) {
+    let prevent = false;
     for (const t of e.changedTouches) {
       const target = t.target;
       if (target === joystick || joystick.contains(target)) {
@@ -221,14 +222,16 @@ function createMobileControls() {
         const rect = joystick.getBoundingClientRect();
         joyCenter = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
         updateJoy(t.clientX, t.clientY);
-        e.preventDefault();
+        prevent = true;
       } else if (target === jump) {
         requestJump();
-        e.preventDefault();
+        prevent = true;
       } else {
         lookTouches[t.identifier] = { x: t.clientX, y: t.clientY };
+        prevent = true;
       }
     }
+    if (prevent) e.preventDefault();
   }
   function handleTouchMove(e) {
     let prevent = false;
