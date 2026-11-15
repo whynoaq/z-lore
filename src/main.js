@@ -50,7 +50,7 @@ function init() {
 
   // Камера от первого лица
   cameraCtrl = new FirstPersonCamera(camera, player)
-  player.group.position.set(0, 0.5, 0)
+  player.group.position.set(0, 0.5, -1.0)
   cameraCtrl.intro = true
   cameraCtrl.pitch = Math.PI / 2
   cameraCtrl.height = 0.2
@@ -156,14 +156,14 @@ function animate() {
       cameraCtrl.pitch = Math.PI / 2
       cameraCtrl.height = 0.2
       cameraCtrl.yaw = 0
-      player.group.position.set(0, 0.5, 0)
+      player.group.position.set(0, 0.5, -1.0)
     } else if (t < 2.0) {
       // потихоньку поднимается
       const k = smooth((t - 0.6) / 1.4)
       cameraCtrl.pitch = Math.PI / 2 * (1 - k)
       cameraCtrl.height = 0.2 + 0.6 * k
       cameraCtrl.yaw = 0
-      player.group.position.set(0, 0.5, 0.8 * k)
+      player.group.position.set(0, 0.5, -1.0 + 0.8 * k)
     } else if (t < 3.2) {
       // осматривается
       const k = smooth((t - 2.0) / 1.2)
@@ -171,28 +171,28 @@ function animate() {
       cameraCtrl.height = 0.8
       if (k < 0.5) cameraCtrl.yaw = 0.5 * smooth(k / 0.5)
       else cameraCtrl.yaw = 0.5 - 0.8 * smooth((k - 0.5) / 0.5)
-      player.group.position.set(0, 0.5, 0.8)
+      player.group.position.set(0, 0.5, -0.2)
     } else if (t < 4.2) {
       // поворачивается влево
       const k = smooth((t - 3.2) / 1.0)
       cameraCtrl.pitch = 0
       cameraCtrl.height = 0.8
       cameraCtrl.yaw = -0.3 + (Math.PI / 3 + 0.3) * k
-      player.group.position.set(0, 0.5, 0.8 + 0.4 * k)
+      player.group.position.set(0, 0.5, -0.2 + 0.4 * k)
     } else if (t < 5.2) {
       // встает (плавно, на месте поворота)
       const k = smooth((t - 4.2) / 1.0)
       cameraCtrl.pitch = 0
       cameraCtrl.height = 0.8 + 0.7 * k
       cameraCtrl.yaw = Math.PI / 3
-      player.group.position.set(0, 0.5 + 0.25 * k, 1.2 + 0.8 * k)
+      player.group.position.set(0, 0.5 + 0.25 * k, 0.2 + 0.8 * k)
     } else {
       introActive = false
       cameraCtrl.intro = false
       cameraCtrl.pitch = 0
       cameraCtrl.height = 1.5
       cameraCtrl.yaw = Math.PI / 3
-      player.group.position.set(0, 0.75, 2.0)
+      player.group.position.set(0, 0.75, 1.5)
       const el = document.getElementById('intro-text')
       if (el) {
         el.classList.add('show')
