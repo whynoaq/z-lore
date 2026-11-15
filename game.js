@@ -333,7 +333,7 @@ function init() {
   collidables = createWorld(scene);
   cameraCtrl = new FirstPersonCamera(camera, player);
 
-  const flashlight = new THREE.SpotLight(0xffffff, 2.5, 35, Math.PI / 7, 0.45, 2);
+  const flashlight = new THREE.SpotLight(0xffaa55, 4.5, 45, Math.PI / 6, 0.4, 2);
   const flashTarget = new THREE.Object3D();
   scene.add(flashlight, flashTarget);
   flashlight.target = flashTarget;
