@@ -27,7 +27,7 @@ const crosshairEl = document.getElementById('crosshair')
 function init() {
   // Сцена
   scene = new THREE.Scene()
-  scene.background = new THREE.Color(0x1a1a2e)
+  scene.background = new THREE.Color(0x0a0a12)
   scene.fog = new THREE.FogExp2(0x1a1a2e, 0.04)
 
   // Камера (first-person)
@@ -51,11 +51,11 @@ function init() {
   // Камера от первого лица
   cameraCtrl = new FirstPersonCamera(camera, player)
 
-  const flashLight = new THREE.PointLight(0xffaa55, 12, 100)
+  const flashLight = new THREE.PointLight(0xffaa55, 18, 120)
   scene.add(flashLight)
 
   const beamGeo = new THREE.ConeGeometry(2.5, 20, 16, 1, true)
-  const beamMat = new THREE.MeshBasicMaterial({ color: 0xffaa55, transparent: true, opacity: 0.1, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide })
+  const beamMat = new THREE.MeshBasicMaterial({ color: 0xffaa55, transparent: true, opacity: 0.15, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide })
   const flashBeam = new THREE.Mesh(beamGeo, beamMat)
   scene.add(flashBeam)
 

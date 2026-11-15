@@ -141,9 +141,9 @@ class Player {
 /* ---------- world ---------- */
 function createWorld(scene) {
   const collidables = [];
-  const ambient = new THREE.AmbientLight(0x8899bb, 0.35);
+  const ambient = new THREE.AmbientLight(0x8899bb, 0.15);
   scene.add(ambient);
-  const dirLight = new THREE.DirectionalLight(0x8899cc, 1.0);
+  const dirLight = new THREE.DirectionalLight(0x8899cc, 0.3);
   dirLight.position.set(10, 20, 10);
   dirLight.castShadow = true;
   dirLight.shadow.camera.left = -30;
@@ -179,9 +179,9 @@ function createWorld(scene) {
     collidables.push(mesh);
   });
 
-  const woodMat = new THREE.MeshStandardMaterial({ color: 0x4a3a3a });
-  const mattressMat = new THREE.MeshStandardMaterial({ color: 0x6a6a7a });
-  const pillowMat = new THREE.MeshStandardMaterial({ color: 0x4a4a5a });
+  const woodMat = new THREE.MeshStandardMaterial({ color: 0x2a1a10 });
+  const mattressMat = new THREE.MeshStandardMaterial({ color: 0x3a3a3a });
+  const pillowMat = new THREE.MeshStandardMaterial({ color: 0x2a2a2a });
 
   const frame = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.2, 3.2), woodMat);
   frame.position.set(0, 0.1, 0);
@@ -367,7 +367,7 @@ let scene, camera, renderer, player, cameraCtrl, collidables, clock;
 function init() {
   console.log('init started');
   scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x1a1a2e);
+  scene.background = new THREE.Color(0x0a0a12);
   scene.fog = new THREE.FogExp2(0x1a1a2e, 0.04);
   camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
   renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -381,11 +381,11 @@ function init() {
   collidables = createWorld(scene);
   cameraCtrl = new FirstPersonCamera(camera, player);
 
-  const flashLight = new THREE.PointLight(0xffaa55, 12, 100);
+  const flashLight = new THREE.PointLight(0xffaa55, 18, 120);
   scene.add(flashLight);
 
   const beamGeo = new THREE.ConeGeometry(2.5, 20, 16, 1, true);
-  const beamMat = new THREE.MeshBasicMaterial({ color: 0xffaa55, transparent: true, opacity: 0.1, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
+  const beamMat = new THREE.MeshBasicMaterial({ color: 0xffaa55, transparent: true, opacity: 0.15, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
   const flashBeam = new THREE.Mesh(beamGeo, beamMat);
   scene.add(flashBeam);
 
