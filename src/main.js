@@ -50,6 +50,13 @@ function init() {
 
   // Камера от первого лица
   cameraCtrl = new FirstPersonCamera(camera, player)
+
+  const flashlight = new THREE.SpotLight(0xffffff, 2.5, 35, Math.PI / 7, 0.45, 2)
+  const flashTarget = new THREE.Object3D()
+  scene.add(flashlight, flashTarget)
+  flashlight.target = flashTarget
+  window.__flashlight = flashlight
+  window.__flashTarget = flashTarget
   player.group.position.set(0, 0.5, -1.0)
   cameraCtrl.intro = true
   cameraCtrl.pitch = Math.PI / 2
@@ -151,6 +158,12 @@ function animate() {
   if (!isLoaded) return
 
   const dt = Math.min(clock.getDelta(), 0.1)
+
+  if (window.__flashlight) {
+    window.__flashlight.position.copy(camera.position)
+    const dir = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion)
+    window.__flashTarget.position.copy(camera.position).add(dir.multiplyScalar(12))
+  }
 
   if (introActive) {
     if (introStart === null) introStart = clock.elapsedTime
